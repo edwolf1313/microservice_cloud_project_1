@@ -11,5 +11,6 @@ urlpatterns = [
     path("<int:client_id>/chart/<int:id>/", ChartAccessView.as_view()),
     path("<int:client_id>/chart/", ChartAccessView.as_view()),
     path("<int:chart_id>/chart/delete/", ChartAccessView.as_view()),
+
     #path("refreshtoken/", RefreshAccessView.as_view())
 ]
