@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from chart_user_api.serializers import ChartSerializer, CreateChartSerializer
-
+from decimal import *
 from chart_user_api.models import chart_user_data
 from django.conf import settings
 import requests
@@ -39,6 +39,8 @@ class ChartAccessView(APIView):
             if not (client_id := checkauth(request)):
                 return Response(status.HTTP_403_FORBIDDEN)
             request.data["client_id"] = client_id
+            price = product_price(request.data["product_id"])
+            request.data["payment"] = int(Decimal(price)) * int(request.data["quantity"])
             serializer = CreateChartSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -77,7 +79,17 @@ def checkauth(request):
             req = requests.get(settings.SERVICE_API + "/authentication/auth/", timeout=10, headers={"Authorization":auth_header_value})
             if not req.status_code == 200:
                 return 0
+            print (req.text)
             return json.loads(req.text)['client_id']
         return 0
+    except:
+        return 0
+
+def product_price(product_id):
+    try:
+        req = requests.get(settings.PRODUCT_API + "/product_api/product-detail/{0}/".format(product_id), timeout=10)
+        if not req.status_code == 200:
+            return 0
+        return req.json()['price']
     except:
         return 0

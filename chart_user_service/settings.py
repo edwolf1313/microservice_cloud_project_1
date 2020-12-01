@@ -130,3 +130,4 @@ STATIC_URL = '/static/'
 
 load_dotenv()
 SERVICE_API = os.getenv('AUTH_SERVICE')
+PRODUCT_API = os.getenv('PRODUCT_SERVICE')
